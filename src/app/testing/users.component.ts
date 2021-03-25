@@ -1,6 +1,7 @@
 import {Component} from '@angular/core';
-import {of} from 'rxjs';
 import {BackendService} from './backend.service';
+import {catchError} from 'rxjs/operators';
+import {throwError} from 'rxjs';
 
 @Component({
   selector: 'app-users',
@@ -12,7 +13,11 @@ export class UsersComponent {
   }
 
   getUsers() {
-    return of([] as any[]);
+    return this.backendService.getUsers().pipe(
+      catchError(() => {
+        return throwError('Error while getting users');
+      })
+    );
   }
 
 }

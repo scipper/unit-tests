@@ -32,15 +32,32 @@ describe('UsersComponent', () => {
     const users: any[] = [{
       name: 'TestUser'
     }];
+
     backendServiceSpy.getUsers.and.returnValue(context.cold('a|', {
       a: users
     }));
 
-    component.getUsers().subscribe((result) => {
-      expect(result).toEqual(users);
+    let result = {};
+    component.getUsers().subscribe((response) => {
+      result = response;
     });
     context.flush();
 
+    expect(result).toEqual(users);
+  }));
+
+  it('catches api error', marbles((context) => {
+    backendServiceSpy.getUsers.and.returnValue(context.cold('#'));
+
+    let errorMessage;
+    component.getUsers().subscribe({
+      error: (error) => {
+        errorMessage = error;
+      }
+    });
+    context.flush();
+
+    expect(errorMessage).toBeDefined();
   }));
 
 });
